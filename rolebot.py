@@ -2,6 +2,18 @@ import discord
 import pypokedex
 import constant
 from discord.ext import commands
+from pypokedex import pokemon
+
+# For testing purposes only:
+userInput = input("Enter the Pokemon you want to shiny hunt: ")
+print(userInput)
+
+# # Validate User Input Function
+# def validate_user_input():
+#     userInput = message
+
+
+
 
 # Constants
 POKETWO_TOTAL = 809
@@ -23,15 +35,30 @@ for i in range(1, POKETWO_TOTAL):
 
 # Pseudocode
 # if message starts with "%sh"
+#   validate_user_input()
+#   Run user input against map.
+#   If a match exists, 
+#       if role doesn't exist
+#           create role
+#       else
+#           add role to user
+# If no match exists
+#   throw an error 
+#   prompt the user to try again: correct format.  
 
-# Run user input against map.
-# If a match exists, then add role to user.
-# If no match exists, then throw an error and
-# prompt the user to try again, specifying
-# the correct format.
+if userInput in pokemonNames:
+    print("Yes, it exists")
+else:
+    print("No, it does not exist")
+
+# @client.command(pass_context=True)
+# async def loot(ctx,*,message):
+#     await client.say(message)
+
 # @client.event
 # async def on_message(message):
 #     if message.content.startswith(f"%sh"):
+#         validate_user_input()
         
 
 

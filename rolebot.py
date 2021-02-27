@@ -2,7 +2,7 @@ import discord
 from discord.ext import commands
 
 #Token for Discord Bot
-TOKEN = ''
+TOKEN = 'HsuNc7WBeJsgIBs9Vkz2ROO5q-e5WN4K'
 
 #Prefix for Discord will be %
 client = commands.Bot(command_prefix='%')

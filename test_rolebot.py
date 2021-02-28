@@ -11,7 +11,7 @@ class TestRolebot(unittest.TestCase):
         self.assertEqual(validate_user_input(f"%sh Mimikyu"), "found Mimikyu")
 
     def test_troll_input(self):
-    #Users who enter garbage should get rejected, idiot.
+    #Users who enter stupid shit should get hit.
         self.assertRaises(ValueError, validate_user_input, f"%sh bugs bunny")
         self.assertRaises(ValueError, validate_user_input, f"%sh m1m1kyu")
         self.assertRaises(ValueError, validate_user_input, f"%sh m i m i k y u")

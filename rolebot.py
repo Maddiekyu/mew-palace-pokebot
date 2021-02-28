@@ -3,21 +3,25 @@ import pokebase as pb
 from discord.ext import commands
 import json
 
+#For testing purposes only:
+# userInput = input("Enter the Pokemon you want to shiny hunt: ")
+# print(userInput)
+
 #convert JSON to dict
 with open('pokemon.json') as json_file:
     pokemonData = json.load(json_file)
 
-print(type(pokemonData))
+# print(type(pokemonData))
 # print("\nPokemon 1:", pokemonData['bulbasaur']) 
+# print("Length of pokemonData: ", len(pokemonData))
 # print("\nPokemon 2:", pokemonData['ivysaur']) 
-# For testing purposes only:
-# userInput = input("Enter the Pokemon you want to shiny hunt: ")
-# print(userInput)
+
+
 
 # Validate User Input Function
-# def validate_user_input():
-#     print("hello world")
-
+def validate_user_input(userInput):
+    return "hello world"
+    
 # Constants
 # POKETWO_TOTAL = 898
 
@@ -30,7 +34,6 @@ print(type(pokemonData))
 
 # Fill map with {pokedex #, pokemon} key value pairs
 # API call for Pokemon data.
-# https://pypi.org/project/pypokedex/
 # pokemonNames = []
 # index = 0
 # #pokeName = pypokedex.pokemon.Pokemon()

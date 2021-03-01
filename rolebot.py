@@ -16,7 +16,12 @@ with open('pokemon.json') as json_file:
 # print("Length of pokemonData: ", len(pokemonData))
 # print("\nPokemon 2:", pokemonData['ivysaur']) 
 
-
+for key, value in pokemonData:
+    userInput = input('Enter a Pokemon Name: ')
+    if userInput == value
+        print(userInput, "exists in dictionary")
+    else
+        print("INVALID INPUT, PLEASE TRY AGAIN")
 
 # Validate User Input Function
 def validate_user_input(userInput):

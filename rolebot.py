@@ -16,9 +16,9 @@ pkmnSet = set(pkmnList)
 
 def validate_user_input(userInput): 
     #userInput = input('Discord command: ').lower()
-    print("UserInput:", userInput)
+    #print("UserInput:", userInput)
     pkmnName = userInput[4:].lower() #!sh Mimikyu
-    print(pkmnName)
+    #print(pkmnName)
     if pkmnName in pkmnSet:
         return "found " + pkmnName
     else:

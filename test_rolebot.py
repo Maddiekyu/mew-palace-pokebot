@@ -178,6 +178,7 @@ class TestRolebot(unittest.TestCase):
         self.assertEqual(validate_user_input(f"%sh kyogre"), "found kyogre")
         self.assertEqual(validate_user_input(f"%sh Kyogre"), "found kyogre")
         self.assertEqual(validate_user_input(f"%sh kYOgrE"), "found kyogre")
+        self.assertEqual(validate_user_input(f"%sh type: null"), "found type: null")
 
     def test_troll_input(self):
     #Users who enter garbage should get rejected.

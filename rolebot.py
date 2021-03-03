@@ -2,27 +2,32 @@ import discord
 import pokebase as pb
 from discord.ext import commands
 import json
-from pokemon_set import pokemonData
+from pokemon_set import pokemonData, pkmnSet
 from pokebase.loaders import pokemon
+from dotenv import load_dotenv
+import os
 
-TOKEN = 'HsuNc7WBeJsgIBs9Vkz2ROO5q-e5WN4K'
+#Discord Bot Token
+#Credentials
+load_dotenv('.env')
 
-# Convert set to all lowercase
-pkmnList = list(pokemonData)
+# prefix will be %
+client = commands.Bot(command_prefix='%')
 
-pkmnList = [element.lower() for element in pkmnList]
+@client.event
+async def on_ready():
+        print('Bot is ready.')
 
-pkmnSet = set(pkmnList)
-
-def validate_user_input(userInput): 
-    #userInput = input('Discord command: ').lower()
-    #print("UserInput:", userInput)
-    pkmnName = userInput[4:].lower() #!sh Mimikyu
-    #print(pkmnName)
-    if pkmnName in pkmnSet:
-        return "found " + pkmnName
-    else:
-        raise ValueError("Invalid Name")
+# check if the user's input is a valid Pokemon name.
+# def validate_user_input(userInput): 
+#     #userInput = input('Discord command: ').lower()
+#     #print("UserInput:", userInput)
+#     pkmnName = userInput[4:].lower() #!sh Mimikyu
+#     #print(pkmnName)
+#     if pkmnName in pkmnSet:
+#         return "found " + pkmnName
+#     else:
+#         raise ValueError("Invalid Name")
 
 #print("Result of validate:", validate_user_input(userInput))
 
@@ -40,4 +45,4 @@ def validate_user_input(userInput):
 #   prompt the user to try again: correct format.  
 
 #run bot using specified token
-#client.run(TOKEN)
+client.run(os.getenv('TOKEN'))

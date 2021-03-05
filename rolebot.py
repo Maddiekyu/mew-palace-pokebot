@@ -20,15 +20,21 @@ client = commands.Bot(command_prefix='%')
 async def on_ready():
         print('Bot is ready.')
 
+# sh add role command
 @client.command()
 async def sh(ctx, message):
+    #parse user's message
     @client.event
     async def on_message(message):
         channel = message.channel
+        # split "%sh " from "[Pokemon Name]"
         pkmnName = message.content[4:].lower()
+        #check if it is a valid pokemon name
         pkmnExists = pkmnName in pkmnSet
         def check(message): 
             return pkmnExists
+        # if a role doesn't already exist, create it
+        # otherwise, just add the role to the user
         if pkmnExists:
             if get(ctx.guild.roles, name = pkmnName):
                 await ctx.send("Role already exists")

@@ -21,26 +21,37 @@ async def on_ready():
         print('Bot is ready.')
 
 @client.command()
-async def role(ctx, * role: discord.Role):
-    user = ctx.message.author
-    await user.add_roles(role)
-
-@client.event
-async def on_message(message):
-    if message.content.startswith('%sh'):
+async def sh(ctx, message):
+    @client.event
+    async def on_message(message):
         channel = message.channel
-        #await channel.send('Hello there!')
+        pkmnName = message.content[4:].lower()
+        pkmnExists = pkmnName in pkmnSet
+        def check(message): 
+            return pkmnExists
+        if pkmnExists:
+            if get(ctx.guild.roles, name = pkmnName):
+                await ctx.send("Role already exists")
+            else:
+                role = await ctx.guild.create_role(name=pkmnName)
+            await ctx.author.add_roles(role)
 
-        def check(message):
-            pkmnName = message.content[4:].lower()
-            #print("Pokemon is:", pkmnName) 
-            return pkmnName in pkmnSet    
+# @client.event
+# async def on_message(message):
+#     if message.content.startswith('%sh'):
+#         channel = message.channel
+#         #await channel.send('Hello there!')
+
+#         def check(message):
+#             pkmnName = message.content[4:].lower()
+#             #print("Pokemon is:", pkmnName) 
+#             return pkmnName in pkmnSet    
         
-        msg = await client.wait_for('message', check=check)
-        if(check):
-            await channel.send('Hello {.author}! Your input is valid! :)'.format(msg))
-        else:
-            await channel.send('Sorry {.author}! Your input is invalid! :('.format(msg))
+#         msg = await client.wait_for('message', check=check)
+#         if(check):
+#             await channel.send('Hello {.author}! Your input is valid! :)'.format(msg))
+#         else:
+#             await channel.send('Sorry {.author}! Your input is invalid! :('.format(msg))
 
         
 

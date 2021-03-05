@@ -1,50 +1,62 @@
 import discord
 import pokebase as pb
 from discord.ext import commands
+import discord.utils
+from discord.utils import get
 import json
+from pokemon_set import pokemonData, pkmnSet
+from pokebase.loaders import pokemon
+from dotenv import load_dotenv
+import os
 
-#For testing purposes only:
-# userInput = input("Enter the Pokemon you want to shiny hunt: ")
-# print(userInput)
+#Discord Bot Token
+#Credentials
+load_dotenv('.env')
 
-#convert JSON to dict
-with open('pokemon.json') as json_file:
-    pokemonData = json.load(json_file)
+# prefix will be %
+client = commands.Bot(command_prefix='%')
 
-# print(type(pokemonData))
-# print("\nPokemon 1:", pokemonData['bulbasaur']) 
-# print("Length of pokemonData: ", len(pokemonData))
-# print("\nPokemon 2:", pokemonData['ivysaur']) 
+@client.event
+async def on_ready():
+        print('Bot is ready.')
 
+@client.command()
+async def role(ctx, * role: discord.Role):
+    user = ctx.message.author
+    await user.add_roles(role)
 
+@client.event
+async def on_message(message):
+    if message.content.startswith('%sh'):
+        channel = message.channel
+        #await channel.send('Hello there!')
 
-# Validate User Input Function
-def validate_user_input(userInput):
-    return "hello world"
-    
-# Constants
-# POKETWO_TOTAL = 898
+        def check(message):
+            pkmnName = message.content[4:].lower()
+            #print("Pokemon is:", pkmnName) 
+            return pkmnName in pkmnSet    
+        
+        msg = await client.wait_for('message', check=check)
+        if(check):
+            await channel.send('Hello {.author}! Your input is valid! :)'.format(msg))
+        else:
+            await channel.send('Sorry {.author}! Your input is invalid! :('.format(msg))
 
-# Token for Discord Bot
-# TOKEN = 'HsuNc7WBeJsgIBs9Vkz2ROO5q-e5WN4K'
+        
 
-# Prefix for Discord will be %sh
-# Format: %sh Mimikyu
-# client = commands.Bot(command_prefix='%')
+# check if the user's input is a valid Pokemon name.
+# def validate_user_input(userInput): 
+#     #userInput = input('Discord command: ').lower()
+#     #print("UserInput:", userInput)
+#     pkmnName = userInput[4:].lower() #!sh Mimikyu
+#     #print(pkmnName)
+#     if pkmnName in pkmnSet:
+#         return "found " + pkmnName
+#     else:
+#         raise ValueError("Invalid Name")
 
-# Fill map with {pokedex #, pokemon} key value pairs
-# API call for Pokemon data.
-# pokemonNames = []
-# index = 0
-# #pokeName = pypokedex.pokemon.Pokemon()
-# for i in range(1, POKETWO_TOTAL + 1):
-#     pokemonNames.append(pb.pokemon(i))
-#     print(pokemonNames[i - 1])
+#print("Result of validate:", validate_user_input(userInput))
 
-# print(type(pokemonNames[1]))
-# print(pokemonNames[1])
-
-# pokeName = pypokedex.pokemon.Pokemon.name
 # Pseudocode
 # if message starts with "%sh"
 #   validate_user_input()
@@ -58,24 +70,5 @@ def validate_user_input(userInput):
 #   throw an error 
 #   prompt the user to try again: correct format.  
 
-# if userInput in pokemonNames:
-#     print("Yes, it exists")
-# else:
-#     print("No, it does not exist")
-
-# @client.command(pass_context=True)
-# async def loot(ctx,*,message):
-#     await client.say(message)
-
-# @client.event
-# async def on_message(message):
-#     if message.content.startswith(f"%sh"):
-#         validate_user_input()
-        
-
-
-
-
-
 #run bot using specified token
-#client.run(TOKEN)
+client.run(os.getenv('TOKEN'))

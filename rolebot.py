@@ -14,7 +14,7 @@ import os
 load_dotenv('.env')
 
 # prefix will be %
-client = commands.Bot(command_prefix='%')
+client = commands.Bot(command_prefix='%', intents = discord.Intents.all())
 
 @client.event
 async def on_ready():
@@ -38,12 +38,14 @@ async def sha(ctx):
             role = await ctx.guild.create_role(name=pkmnName)
         member = ctx.message.author
         role = discord.utils.get(member.guild.roles, name=pkmnName)
-        # keep track of # of pokemon shiny hunted
-        #hasRole = False
-        #print("roleCount: ", roleCount)
+        roleSet = {get(member.roles, name = n) for n in pkmnSet}
+        # limit users to 1 shiny hunt
         if role not in member.roles:
+            if len(roleSet) < 2:
                 await ctx.send(f"{member.mention} is now hunting **{role}**.")
                 await ctx.author.add_roles(role)
+            else:
+                await ctx.send("You can only shiny hunt one Pokemon at a time.") 
                 #hasRole = True
 
 # sh remove role command
@@ -60,11 +62,23 @@ async def shr(ctx):
     # if a role doesn't already exist, create it
     # otherwise, just add the role to the
     if pkmnExists:
-        if not get(ctx.guild.roles, name = pkmnName):
-            role = await ctx.guild.create_role(name=pkmnName)
+        # if not get(ctx.guild.roles, name = pkmnName):
+        #     role = await ctx.guild.create_role(name=pkmnName)
         member = ctx.message.author
         role = discord.utils.get(member.guild.roles, name=pkmnName)
-        await ctx.send(f"{member.mention} is no longer hunting **{role}**.")
-        await ctx.author.remove_roles(role)
+
+        if role in member.roles:
+            await ctx.send(f"{member.mention} is no longer hunting **{role}**.")
+            await ctx.author.remove_roles(role)
+
+@sha.error
+async def sha_error(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument):
+        await ctx.send("Please specify a Pokemon to shiny hunt.")
+
+@shr.error
+async def shr_error(ctx, error):
+    if isinstance(error, commands.MissingRequiredArgument):
+        await ctx.send("Please specify a Pokemon to shiny hunt.")
             
 client.run(os.getenv('TOKEN'))

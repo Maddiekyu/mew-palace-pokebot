@@ -45,7 +45,7 @@ async def sha(ctx):
                 await ctx.send(f"{member.mention} is now hunting **{role}**.")
                 await ctx.author.add_roles(role)
             else:
-                await ctx.send("You can only shiny hunt one Pokemon at a time.") 
+                await ctx.send("You may only shiny hunt one Pokemon at a time.") 
                 #hasRole = True
 
 # sh remove role command
@@ -70,6 +70,11 @@ async def shr(ctx):
         if role in member.roles:
             await ctx.send(f"{member.mention} is no longer hunting **{role}**.")
             await ctx.author.remove_roles(role)
+        print("which role got deleted?", role)
+        print("how many users have this role? ", len(role.members))
+        if len(role.members) == 0:
+            print("which role is getting deleted?", role)
+            await role.delete()
 
 @sha.error
 async def sha_error(ctx, error):

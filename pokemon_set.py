@@ -811,6 +811,6 @@ pokemonData = {"Bulbasaur",
 # Convert set to all lowercase
 pkmnList = list(pokemonData)
 
-pkmnList = [element.lower() for element in pkmnList]
+pkmnList = [element.capitalize() for element in pkmnList]
 
 pkmnSet = set(pkmnList)

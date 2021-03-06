@@ -14,16 +14,16 @@ import os
 load_dotenv('.env')
 
 # prefix will be %
-client = commands.Bot(command_prefix='%', intents = discord.Intents.all())
+client = commands.Bot(command_prefix='^', intents = discord.Intents.all())
 
 client.remove_command('help')
 
 # custom help command
 @client.command(pass_context=True)
 async def help(ctx):
-   await ctx.send("""```%help - Shows this message. 
-%sha [Pokemon name] - Add shiny hunt. 
-%shr [Pokemon name] - Remove shiny hunt.```""")
+   await ctx.send("""```^help - Shows this message. 
+^sha [Pokemon name] - Add shiny hunt. 
+^shr [Pokemon name] - Remove shiny hunt.```""")
 
 @client.event
 async def on_ready():
@@ -44,17 +44,17 @@ async def sha(ctx):
     # otherwise, just add the role to the
     if pkmnExists:
         if not get(ctx.guild.roles, name = pkmnName):
-            role = await ctx.guild.create_role(name=pkmnName)
+            role = await ctx.guild.create_role(name=pkmnName, mentionable=True)
         member = ctx.message.author
         role = discord.utils.get(member.guild.roles, name=pkmnName)
         roleSet = {get(member.roles, name = n) for n in pkmnSet}
         # limit users to 1 shiny hunt
         if role not in member.roles:
-            if len(roleSet) < 2:
+            if len(roleSet) < 3:
                 await ctx.send(f"{member.mention} is now hunting **{role}**.")
                 await ctx.author.add_roles(role)
             else:
-                await ctx.send("You may only shiny hunt one Pokemon at a time.") 
+                await ctx.send("You may only shiny hunt two Pokemon at a time.") 
                 #hasRole = True
 
 # sh remove role command
@@ -79,10 +79,10 @@ async def shr(ctx):
         if role in member.roles:
             await ctx.send(f"{member.mention} is no longer hunting **{role}**.")
             await ctx.author.remove_roles(role)
-        print("which role got deleted?", role)
-        print("how many users have this role? ", len(role.members))
+        # print("which role got deleted?", role)
+        # print("how many users have this role? ", len(role.members))
         if len(role.members) == 0:
-            print("which role is getting deleted?", role)
+            # print("which role is getting deleted?", role)
             await role.delete()
 
 @sha.error

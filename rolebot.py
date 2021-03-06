@@ -16,6 +16,15 @@ load_dotenv('.env')
 # prefix will be %
 client = commands.Bot(command_prefix='%', intents = discord.Intents.all())
 
+client.remove_command('help')
+
+# custom help command
+@client.command(pass_context=True)
+async def help(ctx):
+   await ctx.send("""```%help - Shows this message. 
+%sha [Pokemon name] - Add shiny hunt. 
+%shr [Pokemon name] - Remove shiny hunt.```""")
+
 @client.event
 async def on_ready():
         print('Bot is ready.')

@@ -17,7 +17,7 @@ class ShinyHuntRoles(commands.Cog):
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print('Shiny Hunt Commands loaded.')
+        print('Shiny Hunt Commands Loaded.')
 
     # sh add role command
     @commands.command(pass_context=True)

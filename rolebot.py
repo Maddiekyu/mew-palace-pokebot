@@ -1,5 +1,4 @@
 import discord
-import pokebase as pb
 from discord.ext import commands
 import discord.utils
 from discord.utils import get
@@ -40,72 +39,4 @@ for filename in os.listdir('./cogs'):
     if filename.endswith('.py'):
         client.load_extension(f'cogs.{filename[:-3]}')
 
-# @client.event
-# async def on_ready():
-#         print('Bot is ready.')
-
-@client.command(pass_context=True)
-async def say(ctx, message=None): 
-    await ctx.send(message)
-
-# sh add role command
-@client.command(pass_context=True)
-async def sha(ctx):
-    #parse user's message
-    message = ctx.message
-    # split "%sha " from "[Pokemon Name]"
-    pkmnName = message.content[5:].capitalize()
-    #check if it is a valid pokemon name
-    pkmnExists = pkmnName in pkmnSet
-    def check(message): 
-        return pkmnExists
-    # if a role doesn't already exist, create it
-    # otherwise, just add the role to the
-    if pkmnExists:
-        if not get(ctx.guild.roles, name = pkmnName):
-            role = await ctx.guild.create_role(name=pkmnName, mentionable=True)
-        member = ctx.message.author
-        role = discord.utils.get(member.guild.roles, name=pkmnName)
-        roleSet = {get(member.roles, name = n) for n in pkmnSet}
-        # limit users to 1 shiny hunt
-        if role not in member.roles and len(roleSet) < 3:
-            await ctx.send(f"{member.mention} is now hunting **{role}**.")
-            await ctx.author.add_roles(role)
-        else:
-            await ctx.send("You may only shiny hunt two Pokemon at a time.") 
-
-# sh remove role command
-@client.command(pass_context=True)
-async def shr(ctx):
-    #parse user's message
-    message = ctx.message
-    # split "%shr " from "[Pokemon Name]"
-    pkmnName = message.content[5:].capitalize()
-    #check if it is a valid pokemon name
-    pkmnExists = pkmnName in pkmnSet
-    def check(message): 
-        return pkmnExists
-    # if a role doesn't already exist, create it
-    # otherwise, just add the role to the
-    if pkmnExists:
-        member = ctx.message.author
-        role = discord.utils.get(member.guild.roles, name=pkmnName)
-
-        if role in member.roles:
-            await ctx.send(f"{member.mention} is no longer hunting **{role}**.")
-            await ctx.author.remove_roles(role)
-
-        if len(role.members) == 0:
-            await role.delete()
-
-@sha.error
-async def sha_error(ctx, error):
-    if isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send("Please specify a Pokemon to shiny hunt.")
-
-@shr.error
-async def shr_error(ctx, error):
-    if isinstance(error, commands.MissingRequiredArgument):
-        await ctx.send("Please specify a Pokemon to shiny hunt.")
-            
 client.run(os.getenv('TOKEN'))

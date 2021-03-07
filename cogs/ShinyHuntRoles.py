@@ -45,6 +45,8 @@ class ShinyHuntRoles(commands.Cog):
                 await ctx.send(f"{member.mention} is now hunting **{role}**.")
             else:
                 await ctx.send("You may only shiny hunt two Pokemon at a time.")
+        else:
+            await ctx.send("ERROR: Invalid Pokemon Name.")
 
     #remove shiny hunt
     @commands.command(pass_context=True)
@@ -70,6 +72,8 @@ class ShinyHuntRoles(commands.Cog):
 
             if len(role.members) == 0:
                 await role.delete()
+        else:
+            await ctx.send("ERROR: Invalid Pokemon Name.")
 
     @sha.error
     async def sha_error(ctx, error):

@@ -23,11 +23,30 @@ client.remove_command('help')
 async def help(ctx):
    await ctx.send("""```^help - Shows this message. 
 ^sha [Pokemon name] - Add shiny hunt. 
-^shr [Pokemon name] - Remove shiny hunt.```""")
+^shr [Pokemon name] - Remove shiny hunt.
+^ping - Returns latency of MimiQT.```""")
 
-@client.event
-async def on_ready():
-        print('Bot is ready.')
+#load cog
+@client.command()
+async def load(ctx, extension):
+    client.load_extension(f'cogs.{extension}')
+
+#unload cog
+@client.command()
+async def unload(ctx, extension):
+    client.unload_extension(f'cogs.{extension}')
+
+for filename in os.listdir('./cogs'):
+    if filename.endswith('.py'):
+        client.load_extension(f'cogs.{filename[:-3]}')
+
+# @client.event
+# async def on_ready():
+#         print('Bot is ready.')
+
+@client.command(pass_context=True)
+async def say(ctx, message=None): 
+    await ctx.send(message)
 
 # sh add role command
 @client.command(pass_context=True)
@@ -49,13 +68,11 @@ async def sha(ctx):
         role = discord.utils.get(member.guild.roles, name=pkmnName)
         roleSet = {get(member.roles, name = n) for n in pkmnSet}
         # limit users to 1 shiny hunt
-        if role not in member.roles:
-            if len(roleSet) < 3:
-                await ctx.send(f"{member.mention} is now hunting **{role}**.")
-                await ctx.author.add_roles(role)
-            else:
-                await ctx.send("You may only shiny hunt two Pokemon at a time.") 
-                #hasRole = True
+        if role not in member.roles and len(roleSet) < 3:
+            await ctx.send(f"{member.mention} is now hunting **{role}**.")
+            await ctx.author.add_roles(role)
+        else:
+            await ctx.send("You may only shiny hunt two Pokemon at a time.") 
 
 # sh remove role command
 @client.command(pass_context=True)
@@ -71,18 +88,14 @@ async def shr(ctx):
     # if a role doesn't already exist, create it
     # otherwise, just add the role to the
     if pkmnExists:
-        # if not get(ctx.guild.roles, name = pkmnName):
-        #     role = await ctx.guild.create_role(name=pkmnName)
         member = ctx.message.author
         role = discord.utils.get(member.guild.roles, name=pkmnName)
 
         if role in member.roles:
             await ctx.send(f"{member.mention} is no longer hunting **{role}**.")
             await ctx.author.remove_roles(role)
-        # print("which role got deleted?", role)
-        # print("how many users have this role? ", len(role.members))
+
         if len(role.members) == 0:
-            # print("which role is getting deleted?", role)
             await role.delete()
 
 @sha.error

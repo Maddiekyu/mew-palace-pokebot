@@ -8,6 +8,7 @@ from pokebase.loaders import pokemon
 from dotenv import load_dotenv
 import os
 
+# Cog for managing all of the Pokemon data itself.
 class PokemonData(commands.Cog): 	
 	
 	def __init__(self, client):

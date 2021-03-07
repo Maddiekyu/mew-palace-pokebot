@@ -7,22 +7,18 @@ from pokebase.loaders import pokemon
 from dotenv import load_dotenv
 import os
 
-
+# Cog for all of the general bot utility commands.
 class GeneralCommands(commands.Cog):
     def __init__(self, client):
         self.client = client
 
     @commands.Cog.listener()
     async def on_ready(self):
-        print('Pokemon Data Loaded.')
+        print('General Commands Loaded.')
 
     @commands.command
     async def ping(self, ctx):
         await ctx.send(f'Ping: {round(self.client.latency * 1000)} ms')
-
-    @commands.command(pass_context=True)
-    async def say(self, ctx, message=None): 
-        await ctx.send(message)
 
 def setup(client):
     client.add_cog(GeneralCommands(client))

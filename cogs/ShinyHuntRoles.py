@@ -9,7 +9,7 @@ from pokebase.loaders import pokemon
 from dotenv import load_dotenv
 import os
 
-
+# Cog for managing the Poketwo Shiny Hunt commands.
 class ShinyHuntRoles(commands.Cog):
 
     def __init__(self, client):
@@ -70,6 +70,7 @@ class ShinyHuntRoles(commands.Cog):
 
             if len(role.members) == 0:
                 await role.delete()
+
     @sha.error
     async def sha_error(ctx, error):
         if isinstance(error, commands.MissingRequiredArgument):

@@ -19,27 +19,27 @@ class ShinyHuntRoles(commands.Cog):
     async def on_ready(self):
         print('Shiny Hunt Commands Loaded.')
 
-    # sh add role command
+    # sh add role command.
     @commands.command(pass_context=True)
     async def sha(self, ctx):
-        # parse user's message
+        # Parse user's message.
         message = ctx.message
-        # split "%sha " from "[Pokemon Name]"
+        # Split "&sha " from "[Pokemon Name]".
         pkmnName = message.content[5:].capitalize()
-        # check if it is a valid pokemon name
+        # Check if it is a valid pokemon name.
         pkmnExists = pkmnName in pkmnSet
 
         def check(message):
             return pkmnExists
-        # if a role doesn't already exist, create it
-        # otherwise, just add the role to the
+        # If a role doesn't already exist, then create it.
+        # Otherwise, just add the role to the user.
         if pkmnExists:
             if not get(ctx.guild.roles, name=pkmnName):
                 role = await ctx.guild.create_role(name=pkmnName, mentionable=True)
             member = ctx.message.author
             role = discord.utils.get(member.guild.roles, name=pkmnName)
             roleSet = {get(member.roles, name=n) for n in pkmnSet}
-            # limit users to 1 shiny hunt
+            # Limit users to 2 shiny hunts.
             if role not in member.roles and len(roleSet) < 3:
                 await ctx.author.add_roles(role)
                 await ctx.send(f"{member.mention} is now hunting **{role}**.")
@@ -49,17 +49,17 @@ class ShinyHuntRoles(commands.Cog):
     #remove shiny hunt
     @commands.command(pass_context=True)
     async def shr(self, ctx):
-        # parse user's message
+        # Parse user's message.
         message = ctx.message
-        # split "%shr " from "[Pokemon Name]"
+        # Split "&shr " from "[Pokemon Name]".
         pkmnName = message.content[5:].capitalize()
-        # check if it is a valid pokemon name
+        # Check if user input is a valid pokemon name.
         pkmnExists = pkmnName in pkmnSet
 
         def check(message):
             return pkmnExists
-        # if a role doesn't already exist, create it
-        # otherwise, just add the role to the
+        # Remove role from user.
+        # If nobody is using the role, then delete role from server.
         if pkmnExists:
             member = ctx.message.author
             role = discord.utils.get(member.guild.roles, name=pkmnName)

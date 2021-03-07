@@ -13,7 +13,7 @@ import os
 load_dotenv('.env')
 
 # prefix will be %
-client = commands.Bot(command_prefix='^', intents = discord.Intents.all())
+client = commands.Bot(command_prefix='&', intents = discord.Intents.all())
 
 # Load cog.
 @client.command()

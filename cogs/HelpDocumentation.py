@@ -20,10 +20,10 @@ class HelpDocumentation(commands.Cog):
     # custom help command
     @commands.command(pass_context=True)
     async def help(self, ctx):
-        await ctx.send("""```^help - Shows this message. 
-    ^sha [Pokemon name] - Add shiny hunt. 
-    ^shr [Pokemon name] - Remove shiny hunt.
-    ^ping - Returns latency of MimiQT.```""")
+        await ctx.send("""```&help - Shows this message. 
+&sha [Pokemon name] - Add shiny hunt. 
+&shr [Pokemon name] - Remove shiny hunt.
+&ping - Returns latency of MimiQT.```""")
 
 def setup(client):
     client.add_cog(HelpDocumentation(client))

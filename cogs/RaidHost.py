@@ -24,7 +24,14 @@ class RaidHost(commands.Cog):
         message = ctx.message
         # Split "&host " from "[Desired Channel Name]".
         raidChannelName = message.content[6:].lower()
-        await guild.create_text_channel(raidChannelName, category = ctx.guild.categories[1])
+        # Overwrite permissions.
+        overwrites = {
+            guild.default_role: discord.PermissionOverwrite(read_messages=False),
+            guild.me: discord.PermissionOverwrite(read_messages=True)
+        }
+
+        # Create private channel.
+        channel = await guild.create_text_channel(raidChannelName, overwrites = overwrites, category = ctx.guild.categories[1])
 
         # Welcome to shiny mimikyu
         # Following are the available bot commands that you can use. Please note that all commands must be executed from this channel.

@@ -40,7 +40,7 @@ class ShinyHuntRoles(commands.Cog):
             role = discord.utils.get(member.guild.roles, name=pkmnName)
             roleSet = {get(member.roles, name=n) for n in pkmnSet}
             # Limit users to 2 shiny hunts.
-            if role not in member.roles and len(roleSet) < 3:
+            if role not in member.roles and len(roleSet) <= 2:
                 await ctx.author.add_roles(role)
                 await ctx.send(f"{member.mention} is now hunting **{role}**.")
             else:

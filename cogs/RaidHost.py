@@ -56,13 +56,21 @@ class RaidHost(commands.Cog):
     @commands.command(name = 'mute', pass_context = True)
     async def mute(self, ctx, member: discord.Member):
         await ctx.channel.set_permissions(member, send_messages=False, view_channel=True)
-        embed = discord.Embed(title="muted", description=f"{member.mention} was muted ", colour=discord.Colour.red())
+        embed = discord.Embed(title=f"*{member} was muted!*", description=f"{member.mention} was muted. ", colour=discord.Colour.red())
         await ctx.send(embed = embed)
 
     @commands.command(name = 'unmute', pass_context = True)
     async def unmute(self, ctx, member: discord.Member):
         await ctx.channel.set_permissions(member, send_messages=True, view_channel=True)
-        embed = discord.Embed(title="unmuted", description=f"{member.mention} was unmuted ", colour=discord.Colour.green())
+        embed = discord.Embed(title=f"*{member} was unmuted!*", description=f"{member.mention} was unmuted. ", colour=discord.Colour.green())
         await ctx.send(embed = embed)
+
+    @commands.command(name = 'delete', pass_context = True)
+    async def delete(self, ctx):
+        channelName = ctx.message.channel
+        embed = discord.Embed(title=f"*{channelName} was deleted!*", description=f"{channelName} was deleted. ", colour=discord.Colour.gold())
+        await ctx.author.send(embed = embed)
+        await channelName.delete()
+
 def setup(client):
     client.add_cog(RaidHost(client))

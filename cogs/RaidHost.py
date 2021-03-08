@@ -53,18 +53,35 @@ class RaidHost(commands.Cog):
         if isinstance(error, commands.MissingRole):
             await ctx.send("Sorry, only Raid Hosts are allowed to use this command.")
     
+    # Mute users in raid channel.
     @commands.command(name = 'mute', pass_context = True)
     async def mute(self, ctx, member: discord.Member):
         await ctx.channel.set_permissions(member, send_messages=False, view_channel=True)
         embed = discord.Embed(title=f"*{member} was muted!*", description=f"{member.mention} was muted. ", colour=discord.Colour.red())
         await ctx.send(embed = embed)
 
+    # Unmute users in raid channel.
     @commands.command(name = 'unmute', pass_context = True)
     async def unmute(self, ctx, member: discord.Member):
         await ctx.channel.set_permissions(member, send_messages=True, view_channel=True)
         embed = discord.Embed(title=f"*{member} was unmuted!*", description=f"{member.mention} was unmuted. ", colour=discord.Colour.green())
         await ctx.send(embed = embed)
 
+    # Bans users in raid channel.
+    @commands.command(name = 'ban', pass_context = True)
+    async def ban(self, ctx, member: discord.Member):
+        await ctx.channel.set_permissions(member, send_messages=False, view_channel=False)
+        embed = discord.Embed(title=f"*{member} was banned!*", description=f"{member.mention} was banned. ", colour=discord.Colour.red())
+        await ctx.send(embed = embed)
+
+    # Bans users in raid channel.
+    @commands.command(name = 'unban', pass_context = True)
+    async def unban(self, ctx, member: discord.Member):
+        await ctx.channel.set_permissions(member, send_messages=True, view_channel=True)
+        embed = discord.Embed(title=f"*{member} was unbanned!*", description=f"{member.mention} was unbanned. ", colour=discord.Colour.green())
+        await ctx.send(embed = embed)
+
+    # Delete raid channel and all of its messages.
     @commands.command(name = 'delete', pass_context = True)
     async def delete(self, ctx):
         channelName = ctx.message.channel

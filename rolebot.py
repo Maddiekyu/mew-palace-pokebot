@@ -3,8 +3,6 @@ from discord.ext import commands
 import discord.utils
 from discord.utils import get
 import json
-from pokemon_set import pokemonData, pkmnSet
-from pokebase.loaders import pokemon
 from dotenv import load_dotenv
 import os
 

@@ -3,7 +3,6 @@ from discord.ext import commands
 import discord.utils
 from discord.utils import get
 import json
-from pokebase.loaders import pokemon
 from dotenv import load_dotenv
 import os
 
@@ -32,26 +31,32 @@ class RaidHost(commands.Cog):
 
         # Create private channel.
         hostChannel = await guild.create_text_channel(raidChannelName, overwrites = overwrites, category = ctx.guild.categories[1])
+        
+        embedOverview = discord.Embed(title=f"Den Overview", description=f"What den are you hosting? Ex: Den 69", colour=discord.Colour.red())
+        await hostChannel.send(embed = embedOverview)
+        await self.client.wait_for('message')
+        embedConfirm = discord.Embed(title=f"Are you sure? [Y/N]", description=f"Type [Y] to confirm, or [N] to try again.", colour=discord.Colour.red())
+        await self.client.wait_for('message')
 
-        # Welcome to shiny mimikyu
-        # Following are the available bot commands that you can use. Please note that all commands must be executed from this channel.
-        # &mute @username
-        # Revokes the user's right to speak in this channel.
-        # &unmute @username
-        # Allows the user to speak in this channel again.
-        # &ban @username
-        # Removes the user from this channel.
-        # &unban @username
-        # Allows the user to join this channel again.
-        # &lock
-        # Locks the channel which blocks further users from joining. Keep in mind that you can't unlock it and hosting hours will not be tracked after.
-        # &delete
-        # Removes this room permanently along with all the messages/users.
-        # Don't forget to delete this channel once you are finished hosting!
+    # Welcome to shiny mimikyu
+    # Following are the available bot commands that you can use. Please note that all commands must be executed from this channel.
+    # &mute @username
+    # Revokes the user's right to speak in this channel.
+    # &unmute @username
+    # Allows the user to speak in this channel again.
+    # &ban @username
+    # Removes the user from this channel.
+    # &unban @username
+    # Allows the user to join this channel again.
+    # &lock
+    # Locks the channel which blocks further users from joining. Keep in mind that you can't unlock it and hosting hours will not be tracked after.
+    # &delete
+    # Removes this room permanently along with all the messages/users.
+    # Don't forget to delete this channel once you are finished hosting!
     @host.error
     async def host_error(self, ctx, error):
         if isinstance(error, commands.MissingRole):
-            await ctx.send("Sorry, only Raid Hosts are allowed to use this command.")
+            await ctx.send("Sorry, only users with 🌟Raid Host🌟 role are allowed to use this command.")
     
     # Mute users in raid channel.
     @commands.command(name = 'mute', pass_context = True)
@@ -74,7 +79,7 @@ class RaidHost(commands.Cog):
         embed = discord.Embed(title=f"*{member} was banned!*", description=f"{member.mention} was banned. ", colour=discord.Colour.red())
         await ctx.send(embed = embed)
 
-    # Bans users in raid channel.
+    # Unbans users in raid channel.
     @commands.command(name = 'unban', pass_context = True)
     async def unban(self, ctx, member: discord.Member):
         await ctx.channel.set_permissions(member, send_messages=True, view_channel=True)

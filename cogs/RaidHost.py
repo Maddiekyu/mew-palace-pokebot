@@ -34,29 +34,39 @@ class RaidHost(commands.Cog):
         
         embedOverview = discord.Embed(title=f"Den Overview", description=f"What den are you hosting? Ex: Den 69", colour=discord.Colour.red())
         sendOverview = await hostChannel.send(embed = embedOverview)
+
         def check(m):
             msgInHostChannel = m.channel == hostChannel
             print("Check true or false? ", msgInHostChannel)
             return msgInHostChannel
         msgOverview = await self.client.wait_for('message', check = check)
-        embedConfirm = discord.Embed(title=f"Are you Sure [Y/N]?", description=f"Please type Y/N.", colour=discord.Colour.orange())
+
+        embedConfirm = discord.Embed(title=f"Are you Sure [Y/N]?", description=f"Please type Y/N.", colour=discord.Colour.red())
         await hostChannel.send(embed = embedConfirm)
+
         def check_yn(m):
             is_yn = m.content.upper() in ('Y', 'N')
             print("is yn? ", is_yn)
             return is_yn
         msgConfirm = await self.client.wait_for('message', check = check_yn)
-        embedError = discord.Embed(title=f"ERROR: Invalid Input", description=f"Please Enter Y/N.", colour=discord.Colour.orange())
-        while(msgConfirm.content == 'N' or not msgConfirm):
-            await hostChannel.send(embed = embedError)
-            await self.client.wait_for('message', check = check_yn)
+
+        while(msgConfirm.content != 'Y'):
             await hostChannel.send(embed = embedOverview)
             await self.client.wait_for('message', check = check)
             await hostChannel.send(embed = embedConfirm)
-            msgConfirm= await self.client.wait_for('message', check = check_yn)
+            msgConfirm = await self.client.wait_for('message', check = check_yn)
 
+        # Prompt for nature
         embedNature = discord.Embed(title=f"What is the Nature of your Den?", description=f"Type the nature of your den.", colour=discord.Colour.orange())
         await hostChannel.send(embed = embedNature)
+        msgNature = await self.client.wait_for('message', check = check)
+        await hostChannel.send(embed = embedConfirm)
+        msgConfirm = await self.client.wait_for('message', check = check_yn)
+        while(msgConfirm.content != 'Y'):
+            await hostChannel.send(embed = embedNature)
+            await self.client.wait_for('message', check = check)
+            await hostChannel.send(embed = embedConfirm)
+            msgConfirm = await self.client.wait_for('message', check = check_yn)
              
 
     # Welcome to shiny mimikyu

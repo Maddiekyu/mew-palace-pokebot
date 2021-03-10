@@ -33,10 +33,31 @@ class RaidHost(commands.Cog):
         hostChannel = await guild.create_text_channel(raidChannelName, overwrites = overwrites, category = ctx.guild.categories[1])
         
         embedOverview = discord.Embed(title=f"Den Overview", description=f"What den are you hosting? Ex: Den 69", colour=discord.Colour.red())
-        await hostChannel.send(embed = embedOverview)
-        await self.client.wait_for('message')
-        embedConfirm = discord.Embed(title=f"Are you sure? [Y/N]", description=f"Type [Y] to confirm, or [N] to try again.", colour=discord.Colour.red())
-        await self.client.wait_for('message')
+        sendOverview = await hostChannel.send(embed = embedOverview)
+        def check(m):
+            msgInHostChannel = m.channel == hostChannel
+            print("Check true or false? ", msgInHostChannel)
+            return msgInHostChannel
+        msgOverview = await self.client.wait_for('message', check = check)
+        embedConfirm = discord.Embed(title=f"Are you Sure [Y/N]?", description=f"Please type Y/N.", colour=discord.Colour.orange())
+        await hostChannel.send(embed = embedConfirm)
+        def check_yn(m):
+            is_yn = m.content.upper() in ('Y', 'N')
+            print("is yn? ", is_yn)
+            return is_yn
+        msgConfirm = await self.client.wait_for('message', check = check_yn)
+        embedError = discord.Embed(title=f"ERROR: Invalid Input", description=f"Please Enter Y/N.", colour=discord.Colour.orange())
+        while(msgConfirm.content == 'N' or not msgConfirm):
+            await hostChannel.send(embed = embedError)
+            await self.client.wait_for('message', check = check_yn)
+            await hostChannel.send(embed = embedOverview)
+            await self.client.wait_for('message', check = check)
+            await hostChannel.send(embed = embedConfirm)
+            msgConfirm= await self.client.wait_for('message', check = check_yn)
+
+        embedNature = discord.Embed(title=f"What is the Nature of your Den?", description=f"Type the nature of your den.", colour=discord.Colour.orange())
+        await hostChannel.send(embed = embedNature)
+             
 
     # Welcome to shiny mimikyu
     # Following are the available bot commands that you can use. Please note that all commands must be executed from this channel.
@@ -87,7 +108,7 @@ class RaidHost(commands.Cog):
         await ctx.send(embed = embed)
 
     # Delete raid channel and all of its messages.
-    @commands.command(name = 'delete', pass_context = True)
+    @commands.command(name = 'delete', pass_context = True, aliases=['d', 'del'])
     async def delete(self, ctx):
         channelName = ctx.message.channel
         embed = discord.Embed(title=f"*{channelName} was deleted!*", description=f"{channelName} was deleted. ", colour=discord.Colour.gold())

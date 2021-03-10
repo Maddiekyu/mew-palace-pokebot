@@ -32,6 +32,7 @@ class RaidHost(commands.Cog):
         # Create private channel.
         hostChannel = await guild.create_text_channel(raidChannelName, overwrites = overwrites, category = ctx.guild.categories[1])
         
+        # Prompt for Den Name.
         embedOverview = discord.Embed(title=f"Den Overview", description=f"What den are you hosting? Ex: Den 69", colour=discord.Colour.red())
         sendOverview = await hostChannel.send(embed = embedOverview)
 
@@ -41,6 +42,7 @@ class RaidHost(commands.Cog):
             return msgInHostChannel
         msgOverview = await self.client.wait_for('message', check = check)
 
+        # Confirm if the user has desired input.
         embedConfirm = discord.Embed(title=f"Are you Sure [Y/N]?", description=f"Please type Y/N.", colour=discord.Colour.red())
         await hostChannel.send(embed = embedConfirm)
 
@@ -49,7 +51,8 @@ class RaidHost(commands.Cog):
             print("is yn? ", is_yn)
             return is_yn
         msgConfirm = await self.client.wait_for('message', check = check_yn)
-
+        
+        # Keep prompting for den name until they get it right.
         while(msgConfirm.content != 'Y'):
             await hostChannel.send(embed = embedOverview)
             await self.client.wait_for('message', check = check)
@@ -62,11 +65,21 @@ class RaidHost(commands.Cog):
         msgNature = await self.client.wait_for('message', check = check)
         await hostChannel.send(embed = embedConfirm)
         msgConfirm = await self.client.wait_for('message', check = check_yn)
+
+        # Keep prompting for nature until they get it right.
         while(msgConfirm.content != 'Y'):
             await hostChannel.send(embed = embedNature)
             await self.client.wait_for('message', check = check)
             await hostChannel.send(embed = embedConfirm)
             msgConfirm = await self.client.wait_for('message', check = check_yn)
+        
+        # Prompt for IVs
+
+        # Prompt for Gender
+
+        # Prompt for Shiny Type
+
+        # Prompt for Rules (limit 200 characters)
              
 
     # Welcome to shiny mimikyu

@@ -75,24 +75,69 @@ class RaidHost(commands.Cog):
             msgConfirm = await self.client.wait_for('message', check = check_yn)
         
         # Prompt for IVs: 3 Star 4 Star 5 Star
-        embedIV = discord.Embed(title=f"What are the IVs of your Pokemon?", description=f"You can find your raid seed here: https://github.com/Admiral-Fish/RaidFinder", colour=discord.Colour.gold())
+        embedIV = discord.Embed(title=f"What are the IVs of your Pokemon?", description=f"You can find your raid seed here: https://github.com/Admiral-Fish/RaidFinder", colour=discord.Colour.green())
         await hostChannel.send(embed = embedIV)
         msgIV = await self.client.wait_for('message', check = check)
         print("message content: ", msgIV.content)
+        # Only accept input in the format XX/XX/XX/XX/XX/XX
+        # where XX is 0-31.
         parsedIV = re.match("([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])", msgIV.content);
         print(type(parsedIV))
         print("Is the user input a match?");
+
+        embedIV = discord.Embed(title=f"BRUH", description=f"This ain't Cooly's server... PLEASE enter a value 0-31 in format XX/XX/XX/XX/XX/XX.", colour=discord.Colour.green())
+        while(not parsedIV):
+            await hostChannel.send(embed = embedIV)
+            msg = await self.client.wait_for('message', check = check)
+            parsedIV = re.match("([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])", msg.content);
         if(parsedIV):
             print("Match! :)")
-        else:
-            print("Not a match... :(")
+        # else:
+        #     print("Not a match... :(")
+        #     embedIV = discord.Embed(title=f"BRUH", description=f"This ain't Cooly's server... PLEASE enter a value 0-31 in format XX/XX/XX/XX/XX/XX.", colour=discord.Colour.green())
+        #     await hostChannel.send(embed = embedIV)
         # Prompt for Gender
+        embedGender = discord.Embed(title=f"What is the Gender of your Den?", description=f"Type the gender of your den.", colour=discord.Colour.blue())
+        await hostChannel.send(embed = embedGender)
+        msgGender = await self.client.wait_for('message', check = check)
+        await hostChannel.send(embed = embedConfirm)
+        msgConfirm = await self.client.wait_for('message', check = check_yn)
+
+        # Keep prompting for gender until they get it right.
+        while(msgConfirm.content != 'Y'):
+            await hostChannel.send(embed = embedGender)
+            await self.client.wait_for('message', check = check)
+            await hostChannel.send(embed = embedConfirm)
+            msgConfirm = await self.client.wait_for('message', check = check_yn)
 
         # Prompt for Shiny Type
+        embedRarity = discord.Embed(title=f"What is the Shiny Type of your Den?", description=f"Type the shiny type of your den (Square or Star).", colour=discord.Colour.purple())
+        await hostChannel.send(embed = embedRarity)
+        msgGender = await self.client.wait_for('message', check = check)
+        await hostChannel.send(embed = embedConfirm)
+        msgConfirm = await self.client.wait_for('message', check = check_yn)
 
+        # Keep prompting for shiny type until they get it right.
+        while(msgConfirm.content != 'Y'):
+            await hostChannel.send(embed = embedRarity)
+            await self.client.wait_for('message', check = check)
+            await hostChannel.send(embed = embedConfirm)
+            msgConfirm = await self.client.wait_for('message', check = check_yn)
         # Prompt for Rules (limit 200 characters)
-             
+        embedRules = discord.Embed(title=f"Write your Ruleset", description=f"Keep it within 200 characters.", colour=discord.Colour.dark_purple())
+        await hostChannel.send(embed = embedRules)
+        msgRules = await self.client.wait_for('message', check = check) 
+        embedRulesResult = discord.Embed(title=f"Results", description= msgRules.content, colour=discord.Colour.dark_purple())   
+        await hostChannel.send(embed = embedRulesResult)
+        await hostChannel.send(embed = embedConfirm)
+        msgConfirm = await self.client.wait_for('message', check = check_yn)
 
+        # Keep prompting for rules until they get it right.
+        while(msgConfirm.content != 'Y'):
+            await hostChannel.send(embed = embedRules)
+            await self.client.wait_for('message', check = check)
+            await hostChannel.send(embed = embedConfirm)
+            msgConfirm = await self.client.wait_for('message', check = check_yn)
     # Welcome to shiny mimikyu
     # Following are the available bot commands that you can use. Please note that all commands must be executed from this channel.
     # &mute @username

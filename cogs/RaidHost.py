@@ -5,6 +5,7 @@ from discord.utils import get
 import json
 from dotenv import load_dotenv
 import os
+import re
 
 # Cog for the Raid Host Private Room feature.
 class RaidHost(commands.Cog):
@@ -73,8 +74,18 @@ class RaidHost(commands.Cog):
             await hostChannel.send(embed = embedConfirm)
             msgConfirm = await self.client.wait_for('message', check = check_yn)
         
-        # Prompt for IVs
-
+        # Prompt for IVs: 3 Star 4 Star 5 Star
+        embedIV = discord.Embed(title=f"What are the IVs of your Pokemon?", description=f"You can find your raid seed here: https://github.com/Admiral-Fish/RaidFinder", colour=discord.Colour.gold())
+        await hostChannel.send(embed = embedIV)
+        msgIV = await self.client.wait_for('message', check = check)
+        print("message content: ", msgIV.content)
+        parsedIV = re.match("([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])", msgIV.content);
+        print(type(parsedIV))
+        print("Is the user input a match?");
+        if(parsedIV):
+            print("Match! :)")
+        else:
+            print("Not a match... :(")
         # Prompt for Gender
 
         # Prompt for Shiny Type

@@ -22,11 +22,15 @@ class RaidHost(commands.Cog):
         guild = ctx.message.guild
         # Parse user's message.
         message = ctx.message
+
         # Split "&host " from "[Desired Channel Name]".
         raidChannelName = message.content[6:].lower()
+        print("Message Author: ", message.author)
+
         # Overwrite permissions.
         overwrites = {
             guild.default_role: discord.PermissionOverwrite(read_messages=False),
+            guild.get_member(message.author.id): discord.PermissionOverwrite(read_messages=True),
             guild.me: discord.PermissionOverwrite(read_messages=True)
         }
 
@@ -79,6 +83,7 @@ class RaidHost(commands.Cog):
         await hostChannel.send(embed = embedIV)
         msgIV = await self.client.wait_for('message', check = check)
         print("message content: ", msgIV.content)
+
         # Only accept input in the format XX/XX/XX/XX/XX/XX
         # where XX is 0-31.
         parsedIV = re.match("([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])", msgIV.content)
@@ -116,6 +121,7 @@ class RaidHost(commands.Cog):
             await self.client.wait_for('message', check = check)
             await hostChannel.send(embed = embedConfirm)
             msgConfirm = await self.client.wait_for('message', check = check_yn)
+
         # Prompt for Rules (limit 200 characters)
         embedRules = discord.Embed(title=f"Write your Ruleset", description=f"Keep it within 200 characters.", colour=discord.Colour.dark_purple())
         await hostChannel.send(embed = embedRules)
@@ -148,8 +154,21 @@ class RaidHost(commands.Cog):
         embedDisplay.add_field(name='Gender', value= msgGender.content, inline=False)
         embedDisplay.add_field(name='Shiny Type', value= msgRarity.content, inline=False)
         embedDisplay.add_field(name='Rules', value= msgRules.content, inline=False)
+        shinyRaid = await shinyRaidsChannel.send(embed = embedDisplay);
+        # emoji = discord.utils.get(guild.emojis, name='mimilove')
+        # if emoji:
+        await shinyRaid.add_reaction('👍')
+        
+        def checkEmoji(user, reaction):
+            isMimiLove = user != self.client.user and reaction.emoji == '👍'
+            print("Is the user the message author?", user != self.client.user)
+            print("Did the user react? ", reaction.emoji == '👍')
+            return isMimiLove
 
-        await shinyRaidsChannel.send(embed = embedDisplay);
+        reaction, user = await self.client.wait_for('👍', check = checkEmoji)
+        hostChannel.set_permissions(user, read_messages=True)
+
+
     # Welcome to shiny mimikyu
     # Following are the available bot commands that you can use. Please note that all commands must be executed from this channel.
     # &mute @username
@@ -172,6 +191,7 @@ class RaidHost(commands.Cog):
     
     # Mute users in raid channel.
     @commands.command(name = 'mute', pass_context = True)
+    @commands.has_role("🌟Raid Host🌟")
     async def mute(self, ctx, member: discord.Member):
         await ctx.channel.set_permissions(member, send_messages=False, view_channel=True)
         embed = discord.Embed(title=f"*{member} was muted!*", description=f"{member.mention} was muted. ", colour=discord.Colour.red())
@@ -179,6 +199,7 @@ class RaidHost(commands.Cog):
 
     # Unmute users in raid channel.
     @commands.command(name = 'unmute', pass_context = True)
+    @commands.has_role("🌟Raid Host🌟")
     async def unmute(self, ctx, member: discord.Member):
         await ctx.channel.set_permissions(member, send_messages=True, view_channel=True)
         embed = discord.Embed(title=f"*{member} was unmuted!*", description=f"{member.mention} was unmuted. ", colour=discord.Colour.green())
@@ -186,6 +207,7 @@ class RaidHost(commands.Cog):
 
     # Bans users in raid channel.
     @commands.command(name = 'ban', pass_context = True)
+    @commands.has_role("🌟Raid Host🌟")
     async def ban(self, ctx, member: discord.Member):
         await ctx.channel.set_permissions(member, send_messages=False, view_channel=False)
         embed = discord.Embed(title=f"*{member} was banned!*", description=f"{member.mention} was banned. ", colour=discord.Colour.red())
@@ -193,6 +215,7 @@ class RaidHost(commands.Cog):
 
     # Unbans users in raid channel.
     @commands.command(name = 'unban', pass_context = True)
+    @commands.has_role("🌟Raid Host🌟")
     async def unban(self, ctx, member: discord.Member):
         await ctx.channel.set_permissions(member, send_messages=True, view_channel=True)
         embed = discord.Embed(title=f"*{member} was unbanned!*", description=f"{member.mention} was unbanned. ", colour=discord.Colour.green())

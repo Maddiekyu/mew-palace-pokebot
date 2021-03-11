@@ -16,7 +16,7 @@ class RaidHost(commands.Cog):
     async def on_ready(self):
         print('Raid Host Commands Loaded.')
 
-    @commands.command(name = 'host', pass_context = True, invoke_without_command = True)
+    @commands.command(name = 'host', aliases=['raid'], pass_context = True, invoke_without_command = True)
     @commands.has_role("🌟Raid Host🌟")
     async def host(self, ctx):
         guild = ctx.message.guild
@@ -81,21 +81,14 @@ class RaidHost(commands.Cog):
         print("message content: ", msgIV.content)
         # Only accept input in the format XX/XX/XX/XX/XX/XX
         # where XX is 0-31.
-        parsedIV = re.match("([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])", msgIV.content);
-        print(type(parsedIV))
-        print("Is the user input a match?");
+        parsedIV = re.match("([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])", msgIV.content)
 
         embedIV = discord.Embed(title=f"BRUH", description=f"This ain't Cooly's server... PLEASE enter a value 0-31 in format XX/XX/XX/XX/XX/XX.", colour=discord.Colour.green())
         while(not parsedIV):
             await hostChannel.send(embed = embedIV)
             msg = await self.client.wait_for('message', check = check)
-            parsedIV = re.match("([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])", msg.content);
-        if(parsedIV):
-            print("Match! :)")
-        # else:
-        #     print("Not a match... :(")
-        #     embedIV = discord.Embed(title=f"BRUH", description=f"This ain't Cooly's server... PLEASE enter a value 0-31 in format XX/XX/XX/XX/XX/XX.", colour=discord.Colour.green())
-        #     await hostChannel.send(embed = embedIV)
+            parsedIV = re.match("([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])", msg.content)
+
         # Prompt for Gender
         embedGender = discord.Embed(title=f"What is the Gender of your Den?", description=f"Type the gender of your den.", colour=discord.Colour.blue())
         await hostChannel.send(embed = embedGender)
@@ -113,7 +106,7 @@ class RaidHost(commands.Cog):
         # Prompt for Shiny Type
         embedRarity = discord.Embed(title=f"What is the Shiny Type of your Den?", description=f"Type the shiny type of your den (Square or Star).", colour=discord.Colour.purple())
         await hostChannel.send(embed = embedRarity)
-        msgGender = await self.client.wait_for('message', check = check)
+        msgRarity = await self.client.wait_for('message', check = check)
         await hostChannel.send(embed = embedConfirm)
         msgConfirm = await self.client.wait_for('message', check = check_yn)
 
@@ -127,17 +120,36 @@ class RaidHost(commands.Cog):
         embedRules = discord.Embed(title=f"Write your Ruleset", description=f"Keep it within 200 characters.", colour=discord.Colour.dark_purple())
         await hostChannel.send(embed = embedRules)
         msgRules = await self.client.wait_for('message', check = check) 
+        msgRules
         embedRulesResult = discord.Embed(title=f"Results", description= msgRules.content, colour=discord.Colour.dark_purple())   
         await hostChannel.send(embed = embedRulesResult)
         await hostChannel.send(embed = embedConfirm)
         msgConfirm = await self.client.wait_for('message', check = check_yn)
-
+        
         # Keep prompting for rules until they get it right.
         while(msgConfirm.content != 'Y'):
             await hostChannel.send(embed = embedRules)
             await self.client.wait_for('message', check = check)
             await hostChannel.send(embed = embedConfirm)
             msgConfirm = await self.client.wait_for('message', check = check_yn)
+
+        # Send output of the results to the shiny raid channel.
+        # Here, members can react to the embed in order to enter the room.
+        shinyRaidsChannel = self.client.get_channel(819344708722884608)
+        embedDisplay = discord.Embed(colour = discord.Colour.blue())
+
+        # Display output of results in shiny-raids.
+        member = message.author
+        embedDisplay.set_author(name=f"{member}'s Raid", icon_url='https://cdn.discordapp.com/attachments/817278897862213642/818012928162398228/darkmimi.jpg')
+        embedDisplay.set_thumbnail(url='https://cdn.discordapp.com/attachments/817278897862213642/818012928162398228/darkmimi.jpg')
+        embedDisplay.add_field(name='Den', value= msgOverview.content, inline=False)
+        embedDisplay.add_field(name='Nature', value= msgNature.content, inline=False)
+        embedDisplay.add_field(name='IVs', value= msgIV.content, inline=False)
+        embedDisplay.add_field(name='Gender', value= msgGender.content, inline=False)
+        embedDisplay.add_field(name='Shiny Type', value= msgRarity.content, inline=False)
+        embedDisplay.add_field(name='Rules', value= msgRules.content, inline=False)
+
+        await shinyRaidsChannel.send(embed = embedDisplay);
     # Welcome to shiny mimikyu
     # Following are the available bot commands that you can use. Please note that all commands must be executed from this channel.
     # &mute @username

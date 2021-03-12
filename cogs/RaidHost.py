@@ -6,6 +6,7 @@ import json
 from dotenv import load_dotenv
 import os
 import re
+import asyncio
 
 # Cog for the Raid Host Private Room feature.
 class RaidHost(commands.Cog):
@@ -25,7 +26,7 @@ class RaidHost(commands.Cog):
 
         # Split "&host " from "[Desired Channel Name]".
         raidChannelName = message.content[6:].lower()
-        print("Message Author: ", message.author)
+        #print("Message Author: ", message.author)
 
         # Overwrite permissions.
         overwrites = {
@@ -43,7 +44,7 @@ class RaidHost(commands.Cog):
 
         def check(m):
             msgInHostChannel = m.channel == hostChannel
-            print("Check true or false? ", msgInHostChannel)
+            #print("Check true or false? ", msgInHostChannel)
             return msgInHostChannel
         msgOverview = await self.client.wait_for('message', check = check)
 
@@ -53,7 +54,7 @@ class RaidHost(commands.Cog):
 
         def check_yn(m):
             is_yn = m.content.upper() in ('Y', 'N')
-            print("is yn? ", is_yn)
+            #print("is yn? ", is_yn)
             return is_yn
         msgConfirm = await self.client.wait_for('message', check = check_yn)
         
@@ -82,7 +83,7 @@ class RaidHost(commands.Cog):
         embedIV = discord.Embed(title=f"What are the IVs of your Pokemon?", description=f"You can find your raid seed here: https://github.com/Admiral-Fish/RaidFinder", colour=discord.Colour.green())
         await hostChannel.send(embed = embedIV)
         msgIV = await self.client.wait_for('message', check = check)
-        print("message content: ", msgIV.content)
+        # print("message content: ", msgIV.content)
 
         # Only accept input in the format XX/XX/XX/XX/XX/XX
         # where XX is 0-31.
@@ -126,7 +127,6 @@ class RaidHost(commands.Cog):
         embedRules = discord.Embed(title=f"Write your Ruleset", description=f"Keep it within 200 characters.", colour=discord.Colour.dark_purple())
         await hostChannel.send(embed = embedRules)
         msgRules = await self.client.wait_for('message', check = check) 
-        msgRules
         embedRulesResult = discord.Embed(title=f"Results", description= msgRules.content, colour=discord.Colour.dark_purple())   
         await hostChannel.send(embed = embedRulesResult)
         await hostChannel.send(embed = embedConfirm)
@@ -141,7 +141,7 @@ class RaidHost(commands.Cog):
 
         # Send output of the results to the shiny raid channel.
         # Here, members can react to the embed in order to enter the room.
-        shinyRaidsChannel = self.client.get_channel(819344708722884608)
+        shinyRaidsChannel = self.client.get_channel(819432927870976010)
         embedDisplay = discord.Embed(colour = discord.Colour.blue())
 
         # Display output of results in shiny-raids.
@@ -154,19 +154,22 @@ class RaidHost(commands.Cog):
         embedDisplay.add_field(name='Gender', value= msgGender.content, inline=False)
         embedDisplay.add_field(name='Shiny Type', value= msgRarity.content, inline=False)
         embedDisplay.add_field(name='Rules', value= msgRules.content, inline=False)
-        shinyRaid = await shinyRaidsChannel.send(embed = embedDisplay);
-        # emoji = discord.utils.get(guild.emojis, name='mimilove')
-        # if emoji:
+        shinyRaid = await shinyRaidsChannel.send(embed = embedDisplay)
         await shinyRaid.add_reaction('👍')
+        await asyncio.sleep(1)
+        print("Hello, before fetch message")
+        # Fetch the message in the shiny raids channel.
+        message = await shinyRaidsChannel.fetch_message(shinyRaid.id)
+        print(message)
+        print(message.content)
+        print("Hello, after fetch message")
+        print("Users who reacted: ", shinyRaid.reactions.users())
+        # async for user in shinyRaid.reactions.users():
+        #     print(shinyRaid.reactions[user].users())
+        usersReacted = await shinyRaid.reactions.users().flatten()
+        print("size of message.reactions.users(): ", len(shinyRaid.reactions))
+        await shinyRaidsChannel.set_permissions(usersReacted, send_messages=True, view_channel=True)
         
-        def checkEmoji(user, reaction):
-            isMimiLove = user != self.client.user and reaction.emoji == '👍'
-            print("Is the user the message author?", user != self.client.user)
-            print("Did the user react? ", reaction.emoji == '👍')
-            return isMimiLove
-
-        reaction, user = await self.client.wait_for('👍', check = checkEmoji)
-        hostChannel.set_permissions(user, read_messages=True)
 
 
     # Welcome to shiny mimikyu

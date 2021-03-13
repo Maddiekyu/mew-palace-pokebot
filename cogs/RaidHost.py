@@ -10,8 +10,8 @@ import asyncio
 
 # Cog for the Raid Host Private Room feature.
 class RaidHost(commands.Cog):
-    def __init__(self, client):
-        self.client = client
+    def __init__(self, Bot):
+        self.Bot = Bot
 
     @commands.Cog.listener()
     async def on_ready(self):
@@ -41,12 +41,14 @@ class RaidHost(commands.Cog):
         # Prompt for Den Name.
         embedOverview = discord.Embed(title=f"Den Overview", description=f"What den are you hosting? Ex: Den 69", colour=discord.Colour.red())
         sendOverview = await hostChannel.send(embed = embedOverview)
+        await asyncio.sleep(2)
 
         def check(m):
             msgInHostChannel = m.channel == hostChannel
             #print("Check true or false? ", msgInHostChannel)
             return msgInHostChannel
-        msgOverview = await self.client.wait_for('message', check = check)
+        msgOverview = await self.Bot.wait_for('message', check = check)
+        await asyncio.sleep(2)
 
         # Confirm if the user has desired input.
         embedConfirm = discord.Embed(title=f"Are you Sure [Y/N]?", description=f"Please type Y/N.", colour=discord.Colour.red())
@@ -56,33 +58,41 @@ class RaidHost(commands.Cog):
             is_yn = m.content.upper() in ('Y', 'N')
             #print("is yn? ", is_yn)
             return is_yn
-        msgConfirm = await self.client.wait_for('message', check = check_yn)
+        msgConfirm = await self.Bot.wait_for('message', check = check_yn)
+        await asyncio.sleep(2)
         
         # Keep prompting for den name until they get it right.
         while(msgConfirm.content != 'Y'):
             await hostChannel.send(embed = embedOverview)
-            await self.client.wait_for('message', check = check)
+            await self.Bot.wait_for('message', check = check)
+            await asyncio.sleep(2)
             await hostChannel.send(embed = embedConfirm)
-            msgConfirm = await self.client.wait_for('message', check = check_yn)
+            msgConfirm = await self.Bot.wait_for('message', check = check_yn)
+            await asyncio.sleep(2)
 
         # Prompt for nature
         embedNature = discord.Embed(title=f"What is the Nature of your Den?", description=f"Type the nature of your den.", colour=discord.Colour.orange())
         await hostChannel.send(embed = embedNature)
-        msgNature = await self.client.wait_for('message', check = check)
+        msgNature = await self.Bot.wait_for('message', check = check)
+        await asyncio.sleep(2)
         await hostChannel.send(embed = embedConfirm)
-        msgConfirm = await self.client.wait_for('message', check = check_yn)
+        msgConfirm = await self.Bot.wait_for('message', check = check_yn)
+        await asyncio.sleep(2)
 
         # Keep prompting for nature until they get it right.
         while(msgConfirm.content != 'Y'):
             await hostChannel.send(embed = embedNature)
-            await self.client.wait_for('message', check = check)
+            await self.Bot.wait_for('message', check = check)
+            await asyncio.sleep(2)
             await hostChannel.send(embed = embedConfirm)
-            msgConfirm = await self.client.wait_for('message', check = check_yn)
+            msgConfirm = await self.Bot.wait_for('message', check = check_yn)
+            await asyncio.sleep(2)
         
         # Prompt for IVs: 3 Star 4 Star 5 Star
         embedIV = discord.Embed(title=f"What are the IVs of your Pokemon?", description=f"You can find your raid seed here: https://github.com/Admiral-Fish/RaidFinder", colour=discord.Colour.green())
         await hostChannel.send(embed = embedIV)
-        msgIV = await self.client.wait_for('message', check = check)
+        msgIV = await self.Bot.wait_for('message', check = check)
+        await asyncio.sleep(2)
         # print("message content: ", msgIV.content)
 
         # Only accept input in the format XX/XX/XX/XX/XX/XX
@@ -92,56 +102,67 @@ class RaidHost(commands.Cog):
         embedIV = discord.Embed(title=f"BRUH", description=f"This ain't Cooly's server... PLEASE enter a value 0-31 in format XX/XX/XX/XX/XX/XX.", colour=discord.Colour.green())
         while(not parsedIV):
             await hostChannel.send(embed = embedIV)
-            msg = await self.client.wait_for('message', check = check)
+            msg = await self.Bot.wait_for('message', check = check)
+            await asyncio.sleep(2)
             parsedIV = re.match("([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])/([0-2][0-9]|[3][0-1])", msg.content)
 
         # Prompt for Gender
         embedGender = discord.Embed(title=f"What is the Gender of your Den?", description=f"Type the gender of your den.", colour=discord.Colour.blue())
         await hostChannel.send(embed = embedGender)
-        msgGender = await self.client.wait_for('message', check = check)
+        msgGender = await self.Bot.wait_for('message', check = check)
+        await asyncio.sleep(2)
         await hostChannel.send(embed = embedConfirm)
-        msgConfirm = await self.client.wait_for('message', check = check_yn)
+        msgConfirm = await self.Bot.wait_for('message', check = check_yn)
+        await asyncio.sleep(2)
 
         # Keep prompting for gender until they get it right.
         while(msgConfirm.content != 'Y'):
             await hostChannel.send(embed = embedGender)
-            await self.client.wait_for('message', check = check)
+            await self.Bot.wait_for('message', check = check)
+            await asyncio.sleep(2)
             await hostChannel.send(embed = embedConfirm)
-            msgConfirm = await self.client.wait_for('message', check = check_yn)
+            msgConfirm = await self.Bot.wait_for('message', check = check_yn)
+            await asyncio.sleep(2)
 
         # Prompt for Shiny Type
         embedRarity = discord.Embed(title=f"What is the Shiny Type of your Den?", description=f"Type the shiny type of your den (Square or Star).", colour=discord.Colour.purple())
         await hostChannel.send(embed = embedRarity)
-        msgRarity = await self.client.wait_for('message', check = check)
+        msgRarity = await self.Bot.wait_for('message', check = check)
+        await asyncio.sleep(2)
         await hostChannel.send(embed = embedConfirm)
-        msgConfirm = await self.client.wait_for('message', check = check_yn)
+        msgConfirm = await self.Bot.wait_for('message', check = check_yn)
+        await asyncio.sleep(2)
 
         # Keep prompting for shiny type until they get it right.
         while(msgConfirm.content != 'Y'):
             await hostChannel.send(embed = embedRarity)
-            await self.client.wait_for('message', check = check)
+            await self.Bot.wait_for('message', check = check)
             await hostChannel.send(embed = embedConfirm)
-            msgConfirm = await self.client.wait_for('message', check = check_yn)
+            msgConfirm = await self.Bot.wait_for('message', check = check_yn)
 
         # Prompt for Rules (limit 200 characters)
         embedRules = discord.Embed(title=f"Write your Ruleset", description=f"Keep it within 200 characters.", colour=discord.Colour.dark_purple())
         await hostChannel.send(embed = embedRules)
-        msgRules = await self.client.wait_for('message', check = check) 
+        msgRules = await self.Bot.wait_for('message', check = check) 
+        await asyncio.sleep(2)
         embedRulesResult = discord.Embed(title=f"Results", description= msgRules.content, colour=discord.Colour.dark_purple())   
         await hostChannel.send(embed = embedRulesResult)
         await hostChannel.send(embed = embedConfirm)
-        msgConfirm = await self.client.wait_for('message', check = check_yn)
+        msgConfirm = await self.Bot.wait_for('message', check = check_yn)
+        await asyncio.sleep(2)
         
         # Keep prompting for rules until they get it right.
         while(msgConfirm.content != 'Y'):
             await hostChannel.send(embed = embedRules)
-            await self.client.wait_for('message', check = check)
+            await self.Bot.wait_for('message', check = check)
+            await asyncio.sleep(2)
             await hostChannel.send(embed = embedConfirm)
-            msgConfirm = await self.client.wait_for('message', check = check_yn)
+            msgConfirm = await self.Bot.wait_for('message', check = check_yn)
+            await asyncio.sleep(2)
 
         # Send output of the results to the shiny raid channel.
         # Here, members can react to the embed in order to enter the room.
-        shinyRaidsChannel = self.client.get_channel(819432927870976010)
+        shinyRaidsChannel = self.Bot.get_channel(819432927870976010)
         embedDisplay = discord.Embed(colour = discord.Colour.blue())
 
         # Display output of results in shiny-raids.
@@ -156,19 +177,23 @@ class RaidHost(commands.Cog):
         embedDisplay.add_field(name='Rules', value= msgRules.content, inline=False)
         shinyRaid = await shinyRaidsChannel.send(embed = embedDisplay)
         await shinyRaid.add_reaction('👍')
-        await asyncio.sleep(1)
+        await asyncio.sleep(2)
         print("Hello, before fetch message")
         # Fetch the message in the shiny raids channel.
         message = await shinyRaidsChannel.fetch_message(shinyRaid.id)
         print(message)
-        print(message.content)
         print("Hello, after fetch message")
-        print("Users who reacted: ", shinyRaid.reactions.users())
-        # async for user in shinyRaid.reactions.users():
-        #     print(shinyRaid.reactions[user].users())
-        usersReacted = await shinyRaid.reactions.users().flatten()
+        # This should return 1 (Just the bot reacting to the message)
         print("size of message.reactions.users(): ", len(shinyRaid.reactions))
-        await shinyRaidsChannel.set_permissions(usersReacted, send_messages=True, view_channel=True)
+        checkBot = lambda reaction, user: self.client.user != user
+        print("Is checkBot true?", checkBot == True)
+        while True:
+            print("hello, it is true!")
+            result = await self.Bot.wait_for('reaction_add', check = checkBot)
+            if result:
+                await shinyRaidsChannel.set_permissions(result.users(), send_messages=True, view_channel=True)
+        #print("size of message.reactions.users(): ", len(shinyRaid.reactions))
+        
         
 
 
@@ -232,5 +257,5 @@ class RaidHost(commands.Cog):
         await ctx.author.send(embed = embed)
         await channelName.delete()
 
-def setup(client):
-    client.add_cog(RaidHost(client))
+def setup(Bot):
+    Bot.add_cog(RaidHost(Bot))
